@@ -153,15 +153,17 @@ void AWraith::GetBackUp(){
 		UCapsuleComponent* cap = GetCapsuleComponent();
 		UCharacterMovementComponent* movement = GetCharacterMovement();
 
-		SetActorLocation(mesh->GetComponentLocation());
+		mesh->SetSimulatePhysics(false);
+		mesh->SetCollisionProfileName("CharacterMesh");
+		mesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		mesh->bBlendPhysics = false;
+		mesh->UnHideBoneByName("weapon_r");
+		mesh->SetWorldRotation(FRotator3d(0, -90.0, 0));
+
+		SetActorLocation(mesh->GetComponentLocation() + FVector3d(0, 0, 100));
 		cap->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		cap->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 		cap->SetCollisionProfileName("Pawn");
-
-		mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		mesh->SetSimulatePhysics(false);
-		mesh->bBlendPhysics = false;
-		mesh->UnHideBoneByName("weapon_r");
 
 		//movement->DisableMovement(); //might be an issue. We'll see.
 		movement->SetComponentTickEnabled(true);
