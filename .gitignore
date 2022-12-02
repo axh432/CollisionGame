@@ -71,8 +71,8 @@ Intermediate/*
 Plugins/*/Intermediate/*
 
 # Epic Games Content
-Content/ParagonWraith/*
-Content/InfinityBladeAdversaries/*
+#Content/ParagonWraith/*
+#Content/InfinityBladeAdversaries/*
 
 
 # Cache files for the editor to use
