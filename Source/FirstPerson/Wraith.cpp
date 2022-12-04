@@ -132,7 +132,6 @@ void AWraith::OnHitWithBall(FVector Impulse, FVector Location){
 		mesh->bBlendPhysics = true;
 		mesh->HideBoneByName("weapon_r", EPhysBodyOp::PBO_None);
 		movement->StopMovementImmediately();
-		movement->DisableMovement();
 		movement->SetComponentTickEnabled(false);
 		AController* controller = GetController();
 		AWraithAIController* wc = Cast<AWraithAIController>(controller);
@@ -140,7 +139,7 @@ void AWraith::OnHitWithBall(FVector Impulse, FVector Location){
 			wc->StopBehaviourTree();
 		}
 
-		GetWorldTimerManager().SetTimer(GetUpTimerHandle, this, &AWraith::GetBackUp, 1.0f, false, 2.0f);
+		GetWorldTimerManager().SetTimer(GetUpTimerHandle, this, &AWraith::GetBackUp, 1.0f, true, 2.0f);
 	}
 
 	GetMesh()->AddImpulseAtLocation(Impulse, Location);
@@ -148,8 +147,12 @@ void AWraith::OnHitWithBall(FVector Impulse, FVector Location){
 
 void AWraith::GetBackUp(){
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Wraith::GetBackUp"));
-	if (hasFallenOver) {
-		USkeletalMeshComponent* mesh = GetMesh();
+	
+	USkeletalMeshComponent* mesh = GetMesh();
+	FVector meshVelocity = mesh->GetComponentVelocity();
+
+	if (hasFallenOver && meshVelocity.Length() < 10.0f) {
+		
 		UCapsuleComponent* cap = GetCapsuleComponent();
 		UCharacterMovementComponent* movement = GetCharacterMovement();
 
@@ -158,14 +161,16 @@ void AWraith::GetBackUp(){
 		mesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		mesh->bBlendPhysics = false;
 		mesh->UnHideBoneByName("weapon_r");
-		mesh->SetWorldRotation(FRotator3d(0, -90.0, 0));
+		mesh->SetWorldRotation(cap->GetComponentRotation() + FRotator3d(0, -90, 0)); //mesh is set rotated -90 in blueprint.
 
-		SetActorLocation(mesh->GetComponentLocation() + FVector3d(0, 0, 100));
+		SetActorLocation(mesh->GetComponentLocation() + FVector3d(0, 0, 100)); //capsule has to be raised up otherwise will be in the ground
 		cap->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		cap->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 		cap->SetCollisionProfileName("Pawn");
 
-		//movement->DisableMovement(); //might be an issue. We'll see.
+		bool success = mesh->AttachToComponent(cap, FAttachmentTransformRules::KeepWorldTransform);
+		check(success)
+
 		movement->SetComponentTickEnabled(true);
 
 		AController* controller = GetController();
