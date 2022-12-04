@@ -172,6 +172,8 @@ void AWraith::GetBackUp(){
 		check(success)
 		movement->SetComponentTickEnabled(true);
 
+		
+
 		AController* controller = GetController();
 		AWraithAIController* wc = Cast<AWraithAIController>(controller);
 		if (wc) {
