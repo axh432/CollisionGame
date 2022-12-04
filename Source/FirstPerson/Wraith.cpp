@@ -170,7 +170,6 @@ void AWraith::GetBackUp(){
 
 		bool success = mesh->AttachToComponent(cap, FAttachmentTransformRules::KeepWorldTransform);
 		check(success)
-
 		movement->SetComponentTickEnabled(true);
 
 		AController* controller = GetController();

@@ -186,9 +186,9 @@ void AFirstPersonCharacter::ToggleFallOver(){
 	if (hasFallenOver) {
 		GetBackUp();
 	}
-	//else {
-		//FallOver();
-	//}
+	/*else {
+		FallOver();
+	}*/
 
 }
 
